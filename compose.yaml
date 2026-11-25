@@ -7,7 +7,7 @@ x-app: &app
     POSTGRES_PORT: "5432"
     REDIS_URL: redis://redis:6379/0
   volumes:
-    - .:/app
+    - media-data:/app/media
 services:
   db:
     image: postgres:19
@@ -33,7 +33,7 @@ services:
   web:
     <<: *app
     ports:
-      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:${BEST_DOCTOR_WEB_PORT:-8000}:8000"
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -53,3 +53,4 @@ services:
         condition: service_started
 volumes:
   db-data:
+  media-data:

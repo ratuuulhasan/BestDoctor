@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
 from doctors.models import DoctorProfile
+from notifications.models import notify
 from subscriptions.models import Cycle, Subscription, SubscriptionHistory, SubscriptionPlan
 from verification.services import own_profile
 from .models import Invoice, InvoiceItem, Payment, PaymentEvent, Refund
@@ -164,6 +165,7 @@ def review(user, payment_id, decision, amount, currency, notes="", event_id=None
         invoice.save(update_fields=["status"])
         activate(invoice, user)
     payment.save(update_fields=["status", "paid_at"])
+    notify(invoice.doctor.user, "Payment review", f"Payment on invoice {invoice.number} was {decision}.")
     return payment
 
 
@@ -193,4 +195,5 @@ def refund(user, payment_id, reference, reason, amount=None, currency=None):
     invoice.save(update_fields=["status"])
     change_term(invoice.subscription, Subscription.State.REFUNDED, user, reason)
     log_event(payment, user, "refunded", f"refunded:{payment.pk}", reason)
+    notify(invoice.doctor.user, "Refund recorded", f"A full refund was recorded for invoice {invoice.number}.")
     return payment

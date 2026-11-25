@@ -1,0 +1,4 @@
+{% extends "frontend/base.html" %}{% block title %}Notifications{% endblock %}
+{% block content %}<div class="workspace-content"><h1>Notifications</h1>
+<form method="post">{% csrf_token %}<label><input type="checkbox" name="in_app_enabled" {% if pref.in_app_enabled %}checked{% endif %}> In-app notifications</label> <label><input type="checkbox" name="email_enabled" {% if pref.email_enabled %}checked{% endif %}> Email notifications</label> <button>Save preferences</button></form>
+{% for n in page %}<section><h2>{{ n.title }}</h2><p>{{ n.message }}</p>{% if not n.is_read %}<form method="post" action="{% url 'read-notice' n.pk %}">{% csrf_token %}<button>Mark as read</button></form>{% endif %}</section>{% empty %}<p>No notifications yet.</p>{% endfor %}{% include "search/pager.html" %}</div>{% endblock %}

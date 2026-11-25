@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+from celery.schedules import crontab
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
@@ -38,6 +39,10 @@ INSTALLED_APPS = [
     "support",
     "notifications",
     "referrals",
+    "analytics",
+    "audit",
+    "appointments",
+    "assistant",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -46,6 +51,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "audit.middleware.ActivityMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 ROOT_URLCONF = "best_doctor.urls"
@@ -88,13 +94,21 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "portal"
 LOGOUT_REDIRECT_URL = "login"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = os.getenv("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "127.0.0.1")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "1025"))
+EMAIL_TIMEOUT = 10
 CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
 CELERY_TIMEZONE = TIME_ZONE
+CELERY_BEAT_SCHEDULE = {
+    "deliver-notifications": {"task": "notifications.tasks.deliver_email", "schedule": 30.0},
+    "expiry-reminders": {"task": "notifications.tasks.expiry_reminders", "schedule": crontab(minute=5)},
+    "daily-report": {"task": "analytics.tasks.generate_report", "schedule": crontab(hour=0, minute=10)},
+}
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
+        "audit.authentication.AuditedTokenAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
@@ -104,5 +118,14 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {"login": "10/min"},
 }
 SPECTACULAR_SETTINGS = {
+    "ENUM_NAME_OVERRIDES": {
+        "RegistrationDecision": ["approved", "rejected"],
+        "SettlementDecision": ["verified", "rejected"],
+        "ReviewStatus": "reviews.models.Review.Status",
+        "VerificationStatus": "verification.models.Status",
+        "PaymentStatus": "payments.models.Payment.State",
+        "InvoiceStatus": "payments.models.Invoice.State",
+        "TermStatus": "subscriptions.models.Subscription.State",
+    },
     "TITLE": "Best Doctor API", "VERSION": "1.0", "SERVE_INCLUDE_SCHEMA": False,
 }

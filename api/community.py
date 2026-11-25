@@ -46,7 +46,7 @@ class ReportInput(serializers.Serializer):
     reason = serializers.CharField(max_length=500)
 
 
-class DecisionInput(serializers.Serializer):
+class ReviewDecisionInput(serializers.Serializer):
     status = serializers.ChoiceField(choices=("approved", "rejected"))
 
 
@@ -74,10 +74,10 @@ class Reviews(viewsets.ReadOnlyModelViewSet):
         perform(reviews.report, request.user, pk, **validated(ReportInput, request))
         return Response(status=204)
 
-    @extend_schema(request=DecisionInput, responses=ReviewSerializer)
+    @extend_schema(request=ReviewDecisionInput, responses=ReviewSerializer)
     @action(detail=True, methods=["post"])
     def moderate(self, request, pk=None):
-        item = perform(reviews.moderate, request.user, pk, **validated(DecisionInput, request))
+        item = perform(reviews.moderate, request.user, pk, **validated(ReviewDecisionInput, request))
         return Response(self.get_serializer(item).data)
 
 
@@ -181,6 +181,7 @@ class NoticeSerializer(serializers.ModelSerializer):
 
 class PreferenceInput(serializers.Serializer):
     in_app_enabled = serializers.BooleanField()
+    email_enabled = serializers.BooleanField(required=False)
 
 
 class Notices(viewsets.ReadOnlyModelViewSet):

@@ -1,0 +1,3 @@
+{% extends "search/base.html" %}{% block title %}Blog{% endblock %}
+{% block content %}<div class="wrap content"><h1>Blog</h1>
+{% for post in page %}<article class="panel"><h2><a href="{% url 'blog-post' post.slug %}">{{ post.title }}</a></h2><p>{{ post.category }} · {{ post.published_at|date:"j F Y" }}</p>{{ post.content|truncatewords:35 }}</article>{% empty %}<p>No articles published yet.</p>{% endfor %}{% include "search/pager.html" %}</div>{% endblock %}

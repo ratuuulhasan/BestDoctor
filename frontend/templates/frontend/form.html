@@ -4,4 +4,4 @@
 <button class="action">{% if back == 'login' %}Create account{% else %}Save changes{% endif %}</button></form>
 {% if remove_section %}<details class="register"><summary>Remove record</summary>
 <form method="post" action="{% url 'record-remove' remove_section pk %}">{% csrf_token %}
-<p>Remove this record from your profile?</p><button class="link">Confirm removal</button></form></details>{% endif %}</article>{% endblock %}
+<button class="link" data-confirm="Remove this record from your profile?">Remove</button></form></details>{% endif %}</article>{% endblock %}

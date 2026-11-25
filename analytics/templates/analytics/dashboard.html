@@ -1,0 +1,6 @@
+{% extends "frontend/base.html" %}{% block title %}Administration overview{% endblock %}{% block content %}
+<a href="{% url 'admin:index' %}">Administration</a><h1>Directory operations</h1><div class="grid">
+<section><h2>Published doctors</h2><p>{{ published }}</p><a href="{% url 'verification-queue' %}">{{ verifications }} registrations awaiting review</a></section>
+<section><h2>Billing today</h2><p>Received BDT {{ today.received_bdt }} · Refunded BDT {{ today.refunded_bdt }}</p><a href="{% url 'payment-queue' %}">{{ payments }} payments awaiting verification</a></section>
+<section><h2>Community</h2><p><a href="{% url 'admin:reviews_review_changelist' %}">{{ reviews }} reviews pending</a></p><a href="{% url 'support-home' %}">{{ tickets }} open support tickets</a></section>
+</div><h2 class="register">Daily reports</h2><ul>{% for report in page %}<li><a href="{% url 'report-export' report.pk %}">{{ report.date }} · Download CSV</a></li>{% empty %}<li>The scheduler generates the previous day's report.</li>{% endfor %}</ul>{% include "search/pager.html" %}{% endblock %}

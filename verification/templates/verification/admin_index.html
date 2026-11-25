@@ -1,4 +1,6 @@
 {% extends "admin/index.html" %}{% block content %}
+{% if perms.analytics.view_dailyreport %}<p><a href="{% url 'operations' %}">Operations dashboard and reports</a></p>{% endif %}
+{% if perms.support.change_supportticket %}<p><a href="{% url 'support-home' %}">Support queue</a></p>{% endif %}
 {% if user.is_staff and perms.verification.review_evidence %}<p><a href="{% url 'verification-queue' %}">Review BM&amp;DC submissions</a></p>{% endif %}
 {% if user.is_staff and perms.payments.review_payment %}<p><a href="{% url 'payment-queue' %}">Reconcile payments and refunds</a></p>{% endif %}
 {{ block.super }}{% endblock %}

@@ -4,6 +4,8 @@ Best Doctor is a local-development healthcare directory and management platform 
 
 ## Doctor and facility workflows
 
+For the verified full-stack preview on this workstation, open [Best Doctor on port 18081](http://127.0.0.1:18081/). Its Compose project is `bestdoctor-acceptance`. Run commands for this instance with `docker compose -p bestdoctor-acceptance`. For example, create its first administrator interactively with `docker compose -p bestdoctor-acceptance exec web python manage.py createsuperuser`. To restart it later, set `$env:BEST_DOCTOR_WEB_PORT='18081'` in PowerShell and run `docker compose -p bestdoctor-acceptance up --build -d`. The native preview on port 8000 continues to use the original development database.
+
 ### Public directory
 
 Open the [homepage](http://127.0.0.1:8000/) or [doctor search](http://127.0.0.1:8000/doctors/) without signing in. Visitors can combine a name, specialty or facility keyword with specialty, division, district and hospital filters. A doctor qualifies geographically through an active consulting chamber or a current hospital affiliation. A filtered hospital and district must match the same location. Directory pages are paginated and support Unicode specialty and place slugs.
@@ -93,6 +95,35 @@ Django sessions support browser sign-in. API clients can POST an email in the `u
 Super Admin uses Django superuser status. Migrations initialize Admin, Moderator, Doctor, Patient, Hospital Manager, Representative and Support Staff groups. Domain permissions will be assigned when each domain is implemented. Account creation and privilege changes in the user admin require a superuser.
 
 ## Verification
+
+### Community and staff workflows
+
+- Patients can [create an account](http://127.0.0.1:8000/patient/register/), submit a rating and comment on a published doctor's profile, and check the decision in their dashboard. Moderator or Admin staff approve or reject reviews through Django admin. Only approved reviews contribute to the displayed score. Signed-in readers can report a published review.
+- Manage blog posts, categories, tags, FAQ entries, and About, Privacy and Terms pages in the CMS section of Django admin. Draft and future-dated content is private. Contact submissions are available to authorized staff. The Site settings section controls the contact introduction.
+- Signed-in users can [open a support ticket](http://127.0.0.1:8000/support/). Support Staff see the unassigned queue and their own assignments. Claim a ticket before replying. Owners and assigned staff can close or reopen it.
+- For a representative, assign the Representative group and an active RepresentativeProfile. The representative can copy their referral code from their workspace. Doctors can enter it during registration. Administrators review referral status.
+- The [notification inbox](http://127.0.0.1:8000/notifications/) supports read status and independent email and in-app preferences. Billing, registration review, review moderation, support replies and subscription reminders generate notifications.
+
+### Reports, audit and background processing
+
+Staff in the Admin group can use the [operations dashboard](http://127.0.0.1:8000/operations/) to review queues, today's settlement and refund totals, and download generated daily CSV reports. PostgreSQL audit triggers record committed changes to selected financial, identity, directory, editorial and moderation tables, including bulk changes. Audit entries retain status fields and actor IDs. Private evidence, passwords and message bodies are excluded. Public activity counts use route names without search text or visitor identities.
+
+Start the local Compose stack to run Redis, a worker and a single Beat scheduler. Email delivery is polled every 30 seconds, expiry reminders hourly, and the previous day's report at 00:10 Asia/Dhaka time. The email outbox retries unsent entries up to five times. Separate successful email transmission and database commits mean a process crash can cause a repeat delivery. The default backend writes mail to the worker console. A local SMTP catcher can be selected with `DJANGO_EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend`, `EMAIL_HOST`, and `EMAIL_PORT` in the development environment.
+
+```powershell
+docker compose exec redis redis-cli ping
+docker compose exec worker celery -A best_doctor inspect ping
+docker compose exec web celery -A best_doctor call analytics.tasks.generate_report
+docker compose logs --tail=30 worker beat
+```
+
+Compose exposes its web server on localhost port 8000. Set `BEST_DOCTOR_WEB_PORT` to run a separate Compose preview alongside the native server. Use the same Compose project name to reconnect to its existing database and media volumes. Rebuild after editing Python or templates. The native and Compose databases are independent. For results that require background processing, use the Compose web application and its database together.
+
+### Scope of this release
+
+All eight core phases target local development. The assistant and appointments app namespaces are reserved for the optional extensions in the architecture plan. Online booking, a generative assistant, referral payouts, favourites, interactive maps, SMS delivery, and Bangla localization are outside the implemented core. BM&DC evidence and manual payments use staff review. The payment simulator, console mail, and test fixtures support local testing without provider credentials.
+
+### Run the checks
 
 ```powershell
 .\.venv\Scripts\python.exe manage.py check

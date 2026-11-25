@@ -17,6 +17,6 @@
 <button class="action" name="decision" value="verified">Verify payment</button><button name="decision" value="rejected">Reject payment</button></form>{% endif %}
 {% if can_review and payment.status == "verified" %}<details><summary>Record a full refund</summary><form action="{% url 'payment-refund' payment.pk %}" method="post">{% csrf_token %}
 <p><label>Completed refund reference<input name="reference" maxlength="100" required></label></p>
-<p><label>Reason<textarea name="reason" maxlength="300" required></textarea></label></p><button class="action">Record refund of {{ payment.currency }} {{ payment.amount }}</button></form></details>{% endif %}
+<p><label>Reason<textarea name="reason" maxlength="300" required></textarea></label></p><button class="action" data-confirm="Record the full refund and reverse this subscription term?">Record refund of {{ payment.currency }} {{ payment.amount }}</button></form></details>{% endif %}
 {% if payment.refund %}<p>Refund {{ payment.refund.reference }} · {{ payment.currency }} {{ payment.refund.amount }}</p>{% endif %}</section>{% empty %}<p>No payment submitted.</p>{% endfor %}
 <h2 class="register">Subscription history</h2><ul>{% for event in invoice.subscription.history.all %}<li>{{ event.created_at|date:"j M Y H:i" }} · {{ event.new_status|capfirst }}</li>{% endfor %}</ul></div>{% endblock %}

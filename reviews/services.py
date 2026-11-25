@@ -24,7 +24,7 @@ def submit(user, doctor_id, rating, comment):
     if Review.objects.filter(patient=patient, doctor=doctor).exists():
         raise ValidationError("You already submitted a review for this doctor.")
     item = Review(patient=patient, doctor=doctor, rating=rating, comment=comment.strip())
-    item.full_clean()
+    item.full_clean(exclude=["moderated_by", "moderated_at"])
     item.save()
     return item
 

@@ -11,7 +11,8 @@ def inbox(request):
     pref, _ = NotificationPreference.objects.get_or_create(user=request.user)
     if request.method == "POST":
         pref.in_app_enabled = request.POST.get("in_app_enabled") == "on"
-        pref.save(update_fields=["in_app_enabled"])
+        pref.email_enabled = request.POST.get("email_enabled") == "on"
+        pref.save(update_fields=["in_app_enabled", "email_enabled"])
         return redirect("notifications")
     rows = Notification.objects.filter(user=request.user)
     return render(request, "notifications/inbox.html", {"pref": pref, "page": Paginator(rows, 30).get_page(request.GET.get("page"))})

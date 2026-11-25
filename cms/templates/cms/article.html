@@ -1,0 +1,3 @@
+{% extends "search/base.html" %}{% block title %}{{ item.title }}{% endblock %}
+{% block content %}<div class="wrap content"><h1>{{ item.title }}</h1>
+{% if blog %}<p><a href="{% url 'blog' %}?category={{ item.category.slug|urlencode }}">{{ item.category }}</a> · {{ item.published_at|date:"j F Y" }}</p>{% endif %}{{ item.content|linebreaks }}{% if blog %}{% for tag in item.tags.all %}<a href="{% url 'blog' %}?tag={{ tag.slug|urlencode }}">{{ tag }}</a> {% endfor %}{% endif %}</div>{% endblock %}

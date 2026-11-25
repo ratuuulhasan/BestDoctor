@@ -1,0 +1,3 @@
+{% extends "search/base.html" %}{% block title %}Frequently asked questions{% endblock %}
+{% block content %}<div class="wrap content"><h1>Frequently asked questions</h1>
+{% regroup entries by category as groups %}{% for group in groups %}<section><h2>{{ group.grouper }}</h2>{% for entry in group.list %}<details class="panel"><summary>{{ entry.question }}</summary>{{ entry.answer|linebreaks }}</details>{% endfor %}</section>{% empty %}<p>No questions published yet.</p>{% endfor %}</div>{% endblock %}

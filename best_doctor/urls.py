@@ -6,11 +6,14 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from api.views import Identity, Login, RevokeToken
 from core.views import health
+from analytics import views as reporting
 
 admin.site.site_header = "Best Doctor administration"
 admin.site.site_title = "Best Doctor"
 admin.site.index_template = "verification/admin_index.html"
 urlpatterns = [
+    path("operations/", reporting.dashboard, name="operations"),
+    path("operations/reports/<int:pk>/", reporting.export, name="report-export"),
     path("", include("frontend.community_urls")),
     path("api/v1/", include("api.community")),
     path("", include("payments.urls")),

@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db import transaction
 
 from .models import Review, ReviewReport
 from .services import moderate
@@ -18,11 +19,13 @@ class ModerationAdmin(admin.ModelAdmin):
         return False
 
     @admin.action(permissions=["change"], description="Approve reviews and resolve reports")
+    @transaction.atomic
     def approve(self, request, queryset):
         for pk in queryset.values_list("pk", flat=True):
             moderate(request.user, pk, Review.Status.APPROVED)
 
     @admin.action(permissions=["change"], description="Reject reviews and resolve reports")
+    @transaction.atomic
     def reject(self, request, queryset):
         for pk in queryset.values_list("pk", flat=True):
             moderate(request.user, pk, Review.Status.REJECTED)

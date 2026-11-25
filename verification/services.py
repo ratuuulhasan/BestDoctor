@@ -8,6 +8,7 @@ from django.utils import timezone
 from PIL import Image, ImageOps, UnidentifiedImageError
 
 from doctors.models import DoctorProfile
+from notifications.models import notify
 from .models import DoctorVerification, Status, VerificationDocument, VerificationHistory
 
 
@@ -91,6 +92,7 @@ def decide(user, pk, status, remarks):
     VerificationHistory.objects.create(
         verification=item, actor=user, old_status=Status.PENDING, new_status=status, remarks=item.remarks,
     )
+    notify(doctor.user, "Registration review", f"Your verification submission was {status}.")
     return item
 
 
