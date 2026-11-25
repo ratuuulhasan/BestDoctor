@@ -7,3 +7,37 @@ __pycache__/
 media/
 staticfiles/
 celerybeat-schedule*
+
+# Local configuration, credentials and private keys
+.env.*
+.aws/
+.ssh/
+.pgpass
+pgpass.conf
+.netrc
+_netrc
+.npmrc
+.pypirc
+credentials*.json
+service-account*.json
+service_account*.json
+secrets.json
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+
+# Dependencies and local database storage/backups
+venv/
+env/
+node_modules/
+pgdata/
+*.db
+*.sqlite*
+*.dump
+*.backup
+*.sql
+*.sql.gz
+*.log
