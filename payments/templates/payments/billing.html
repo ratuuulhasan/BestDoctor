@@ -1,0 +1,9 @@
+{% extends "frontend/base.html" %}{% block title %}Subscriptions and billing{% endblock %}
+{% block content %}<a href="{% url 'dashboard' %}">← Doctor dashboard</a><h1>Subscriptions and billing</h1>
+<h2>Available plans</h2><div class="grid">{% for plan in plans %}<section><h3>{{ plan.name }}</h3>
+<p><strong>BDT {{ plan.price }}</strong> · {{ plan.get_billing_cycle_display }}</p>{{ plan.description|linebreaks }}
+<form method="post">{% csrf_token %}<input type="hidden" name="plan_id" value="{{ plan.pk }}"><input type="hidden" name="key" value="{{ key }}">
+<button class="action">Create invoice</button></form></section>{% empty %}<p>No subscription plans are available yet.</p>{% endfor %}</div>
+<h2 class="register">Invoices and coverage</h2><ul>{% for invoice in page %}<li><a href="{% url 'invoice-detail' invoice.number %}">{{ invoice.items.all.0.description }} · BDT {{ invoice.total_amount }}</a>
+ · {{ invoice.subscription.coverage }} · {{ invoice.issued_at|date:"j M Y" }}</li>{% empty %}<li>No invoices yet.</li>{% endfor %}</ul>
+{% include "payments/pager.html" %}{% endblock %}

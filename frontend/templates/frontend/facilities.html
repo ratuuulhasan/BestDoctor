@@ -1,0 +1,5 @@
+{% extends "frontend/base.html" %}{% block title %}My hospitals{% endblock %}{% block content %}
+<h1>My hospitals</h1><div class="grid">{% for hospital in hospitals %}<section><h2>{{ hospital }}</h2>
+<a href="{% url 'facility-edit' hospital.pk 'hospital' %}">Edit hospital</a><h3>Chambers</h3><ul>{% for chamber in hospital.chamber_set.all %}
+<li><a href="{% url 'facility-record' hospital.pk 'chamber' chamber.pk %}">{{ chamber }}</a></li>{% empty %}<li>No chambers yet.</li>{% endfor %}</ul>
+<a href="{% url 'facility-edit' hospital.pk 'chamber' %}">+ Add chamber</a></section>{% empty %}<p>No active hospital assignments.</p>{% endfor %}</div>{% endblock %}

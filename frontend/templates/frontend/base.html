@@ -1,0 +1,9 @@
+{% load static %}<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Workspace{% endblock %} | Best Doctor</title>
+<link href="{% static 'frontend/vendor/bootstrap/bootstrap.min.css' %}" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH">
+<link href="{% static 'frontend/workspace.css' %}" rel="stylesheet"></head>
+<body><header><nav class="shell"><a class="brand" href="{% url 'home' %}"><b aria-hidden="true">✚</b> Best Doctor</a>
+{% if user.is_authenticated %}<form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="link">Sign out</button></form>{% endif %}
+</nav></header><main class="shell">{% for message in messages %}<p role="status" class="notice">{{ message }}</p>{% endfor %}
+{% block content %}{% endblock %}</main></body></html>

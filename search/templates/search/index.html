@@ -1,0 +1,7 @@
+{% extends "search/base.html" %}{% block title %}{{ title }}{% endblock %}{% block content %}<div class="wrap content">
+<a class="back" href="{% url 'home' %}">← Directory home</a><h1>{{ title }}</h1><div class="cards">
+{% for item in page %}<article class="panel">
+{% if kind == "specialty" %}<h2><a href="{% url 'public-specialty' item.slug %}">{{ item.name }}</a></h2>{% if item.description %}<p>{{ item.description|truncatewords:28 }}</p>{% endif %}
+{% elif kind == "hospital" %}<h2><a href="{% url 'public-hospital' item.slug %}">{{ item.name }}</a></h2><p>{{ item.hospital_type }} · {{ item.district }}</p>
+{% else %}<h2><a href="{% url 'public-division' item.slug %}">{{ item.name }}</a></h2><div class="chips">{% for d in item.district_set.all %}<a href="{% url 'public-district' item.slug d.slug %}">{{ d.name }}</a>{% endfor %}</div>{% endif %}</article>
+{% empty %}<div class="empty"><p>No entries listed yet.</p></div>{% endfor %}</div>{% include "search/pager.html" %}</div>{% endblock %}

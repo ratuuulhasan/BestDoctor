@@ -1,0 +1,8 @@
+.local
+.venv
+.env
+.git
+**/__pycache__
+media
+staticfiles
+*.png

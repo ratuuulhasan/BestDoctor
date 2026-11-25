@@ -1,0 +1,13 @@
+{% extends "search/base.html" %}{% load static %}{% block content %}
+<div class="hero"><div class="wrap leadgrid"><div class="herotext"><p class="eyebrow">Healthcare directory / Bangladesh</p>
+<h1>Find a doctor<br><em>near you.</em></h1><p class="intro">Explore doctors by specialty and location. See where they practise, their visiting hours and consultation fees.</p></div>
+<img class="heroimage" src="{% static 'frontend/consultation.jpg' %}" width="960" height="720" alt="" fetchpriority="high"></div></div>
+<div class="wrap"><form class="finder" action="{% url 'public-doctors' %}" method="get">
+<label><span>Doctor or specialty</span><input type="search" name="q" maxlength="160" placeholder="Search by name or specialty"></label>
+<label><span>District</span><select name="district"><option value="">All districts</option>{% for district in districts %}<option value="{{ district.pk }}">{{ district.name }}</option>{% endfor %}</select></label>
+<button class="primary"><i class="bi bi-search" aria-hidden="true"></i> Search doctors</button></form>
+<section class="explore"><h2>Browse the directory</h2><div class="paths">
+<a href="{% url 'public-specialties' %}"><i class="bi bi-heart-pulse" aria-hidden="true"></i><strong>By specialty</strong><span>Explore areas of care</span><b aria-hidden="true">↗</b></a>
+<a href="{% url 'public-hospitals' %}"><i class="bi bi-hospital" aria-hidden="true"></i><strong>By hospital</strong><span>Find facilities and their doctors</span><b aria-hidden="true">↗</b></a>
+<a href="{% url 'public-locations' %}"><i class="bi bi-geo-alt" aria-hidden="true"></i><strong>By location</strong><span>Browse divisions and districts</span><b aria-hidden="true">↗</b></a>
+</div></section></div>{% endblock %}

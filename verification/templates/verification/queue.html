@@ -1,0 +1,4 @@
+{% extends "frontend/base.html" %}{% block title %}Verification queue{% endblock %}{% block content %}
+<h1>Verification queue</h1><form method="get"><label for="status">Submission status</label><select name="status" id="status">{% for value,label in choices %}<option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select><button class="action">Filter</button></form>
+<ul>{% for item in page %}<li><a href="{% url 'verification-detail' item.pk %}">{{ item.doctor.full_name }} · {{ item.registration_number }}</a> · {{ item.submitted_at|date:"j M Y" }}</li>{% empty %}<li>No submissions with this status.</li>{% endfor %}</ul>
+{% if page.has_previous %}<a href="?status={{ status|urlencode }}&amp;page={{ page.previous_page_number }}">Previous</a>{% endif %}{% if page.has_next %}<a href="?status={{ status|urlencode }}&amp;page={{ page.next_page_number }}">Next</a>{% endif %}{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "frontend/base.html" %}{% block title %}Doctor dashboard{% endblock %}
+{% block content %}<p class="eyebrow">Doctor dashboard</p><div class="heading"><div><h1>{{ doctor.full_name }}</h1>
+<p>{{ doctor.designation|default:"Doctor" }} · BM&amp;DC {{ doctor.bmdc_number }}</p></div><a class="action" href="{% url 'profile' %}">Edit profile</a></div>
+<p><a href="{% url 'verification-home' %}">Manage BM&amp;DC verification and publication</a></p>
+<p><a href="{% url 'billing' %}">Subscriptions, renewals and billing</a></p>
+<div class="grid">{% for key,title,rows in sections %}<section><div class="heading"><h2>{{ title }}</h2><a href="{% url 'record-new' key %}" aria-label="Add to {{ title }}">+ Add</a></div>
+<ul>{% for row in rows %}<li><a href="{% url 'record-edit' key row.pk %}">{{ row }}</a>{% if key == 'chambers' %}<small>BDT {{ row.consultation_fee }}</small>{% endif %}</li>{% empty %}<li class="muted">No records yet.</li>{% endfor %}</ul>
+</section>{% endfor %}
+<section><div class="heading"><h2>Independent chambers</h2><a href="{% url 'independent-new' %}">+ Add</a></div>
+<ul>{% for room in doctor.independent_chambers.all %}<li><a href="{% url 'independent-edit' room.pk %}">{{ room }}</a></li>{% empty %}<li class="muted">No records yet.</li>{% endfor %}</ul></section>
+</div>{% endblock %}

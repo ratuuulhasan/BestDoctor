@@ -1,0 +1,4 @@
+{% extends "frontend/base.html" %}{% block title %}Payment review{% endblock %}{% block content %}
+<h1>Payment review</h1><form method="get"><label>Status <select name="status">{% for value,label in choices %}<option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label><button class="action">Filter</button></form>
+<ul>{% for payment in page %}<li><a href="{% url 'invoice-detail' payment.invoice.number %}">{{ payment.invoice.doctor.full_name }} · {{ payment.reference }}</a> · {{ payment.currency }} {{ payment.amount }}</li>{% empty %}<li>No payments with this status.</li>{% endfor %}</ul>
+{% include "payments/pager.html" %}{% endblock %}

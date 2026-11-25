@@ -1,0 +1,18 @@
+{% extends "search/base.html" %}{% block title %}{{ doctor.full_name }}{% endblock %}{% block content %}<div class="wrap content">
+<a class="back" href="{% url 'public-doctors' %}">← Doctor directory</a><div class="cardhead">{% if doctor.profile_image %}<img class="avatar large" src="{{ doctor.profile_image.url }}" alt="">{% endif %}<div><h1>{{ doctor.full_name }}</h1><p>{{ doctor.designation }}</p></div></div>
+<p>BM&amp;DC {{ doctor.bmdc_number }} · Registration reviewed by Best Doctor</p><div class="chips">{% for s in doctor.listed_specialties %}<a href="{% url 'public-specialty' s.slug %}">{{ s.name }}</a>{% endfor %}</div>
+{{ doctor.biography|linebreaks }}{% if doctor.doctorqualification_set.all %}<h2>Qualifications</h2><ul>{% for q in doctor.doctorqualification_set.all %}<li>{{ q.degree }}, {{ q.institution }} ({{ q.passing_year }})</li>{% endfor %}</ul>{% endif %}
+{% if doctor.doctorexperience_set.all %}<h2>Experience</h2><ul>{% for job in doctor.doctorexperience_set.all %}<li>{{ job.designation }}, {{ job.organization }} · {{ job.start_date|date:"Y" }}–{{ job.end_date|date:"Y"|default:"present" }}</li>{% endfor %}</ul>{% endif %}
+{% if doctor.listed_affiliations %}<h2>Hospital affiliations</h2><ul>{% for job in doctor.listed_affiliations %}<li><a href="{% url 'public-hospital' job.hospital.slug %}">{{ job.hospital }}</a> · {{ job.designation }}</li>{% endfor %}</ul>{% endif %}
+<h2>Chambers and visiting hours</h2><div class="cards">{% for visit in doctor.listed_visits %}<article class="panel"><h3>{{ visit.chamber.name }}</h3>
+{% if visit.chamber.hospital %}<a href="{% url 'public-hospital' visit.chamber.hospital.slug %}">{{ visit.chamber.hospital }}</a>{% endif %}
+<p>{{ visit.chamber.address }} · {{ visit.chamber.district }}</p><p><strong>BDT {{ visit.consultation_fee }}</strong> · {{ visit.fee_type }}</p>
+{% if visit.chamber.phone %}<a href="tel:{{ visit.chamber.phone }}">{{ visit.chamber.phone }}</a>{% endif %}
+<ul>{% for s in visit.sessions %}<li>{{ s.get_day_of_week_display }} · {{ s.start_time|time:"g:i A" }}–{{ s.end_time|time:"g:i A" }}</li>{% empty %}<li>Visiting hours have not been listed.</li>{% endfor %}</ul>
+{% if visit.holidays %}<strong>Scheduled closures</strong><ul>{% for h in visit.holidays %}<li>{{ h.holiday_date|date:"j F Y" }}</li>{% endfor %}</ul>{% endif %}</article>
+{% empty %}<p>No active chamber listed.</p>{% endfor %}</div>
+<h2>Patient reviews</h2>{% if ratings.count %}<p>{{ ratings.average|floatformat:1 }} / 5 · {{ ratings.count }} review{{ ratings.count|pluralize }}</p>{% endif %}
+<a href="{% url 'write-review' doctor.slug %}">Write a review</a>
+{% for item in reviews %}<article class="panel"><strong>{{ item.rating }} / 5</strong><p>{{ item.comment }}</p>
+{% if user.is_authenticated %}<details><summary>Report review</summary><form method="post" action="{% url 'report-review' item.pk %}">{% csrf_token %}<label>Reason <input name="reason" maxlength="500" required></label><button>Send report</button></form></details>{% endif %}</article>
+{% empty %}<p>No approved reviews yet.</p>{% endfor %}{% include "search/pager.html" with page=reviews %}</div>{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "frontend/base.html" %}{% block title %}Invoice{% endblock %}
+{% block content %}<div class="editor">{% if can_review %}<a href="{% url 'payment-queue' %}">← Payment queue</a>{% else %}<a href="{% url 'billing' %}">← My billing</a>{% endif %}
+<h1>Invoice</h1><p style="overflow-wrap:anywhere">{{ invoice.number }}<br>{{ invoice.issued_at|date:"j F Y" }} · {{ invoice.doctor.full_name }}</p>
+{% for item in invoice.items.all %}<p>{{ item.description }} · {{ invoice.subscription.get_billing_cycle_display }}<br>{{ item.quantity }} × {{ invoice.currency }} {{ item.unit_price }}</p>{% endfor %}
+<h2>Total {{ invoice.currency }} {{ invoice.total_amount }}</h2><p>{{ invoice.get_status_display }} · Coverage: {{ invoice.subscription.coverage }}</p>
+{% if invoice.subscription.start_date %}<p>Starts {{ invoice.subscription.start_date }}{% if invoice.subscription.end_date %}. Expires {{ invoice.subscription.end_date }}{% else %}. Lifetime coverage{% endif %}.</p>{% endif %}
+{% if can_submit %}<h2>Submit transfer reference</h2><form action="{% url 'invoice-payment' invoice.number %}" method="post">{% csrf_token %}
+<p><label>Transaction reference <input required name="reference" maxlength="100"></label></p>
+<p><label>Transferred amount <input required name="amount" type="number" step=".01" min=".01"></label></p>
+<input type="hidden" name="currency" value="{{ invoice.currency }}"><button class="action">Submit for verification</button></form>
+<details class="register"><summary>Cancel this invoice</summary><form method="post" action="{% url 'invoice-cancel' invoice.number %}">{% csrf_token %}<button>Confirm cancellation</button></form></details>{% endif %}
+<h2 class="register">Payments</h2>{% for payment in payments %}<section><h3>{{ payment.reference }}</h3><p>{{ payment.get_provider_display }} · {{ payment.currency }} {{ payment.amount }} · {{ payment.get_status_display }}</p>
+<ul>{% for event in payment.events.all %}<li>{{ event.created_at|date:"j M Y H:i" }} · {{ event.kind|capfirst }}{% if event.notes %} — {{ event.notes }}{% endif %}</li>{% endfor %}</ul>
+{% if can_review and payment.status == "pending" %}<form action="{% url 'payment-decision' payment.pk %}" method="post">{% csrf_token %}
+<p><label>Amount received ({{ payment.currency }})<input name="amount" type="number" step=".01" min=".01"></label></p><input type="hidden" name="currency" value="{{ payment.currency }}">
+<p><label>Review notes (required for rejection)<textarea name="notes" maxlength="300"></textarea></label></p>
+<button class="action" name="decision" value="verified">Verify payment</button><button name="decision" value="rejected">Reject payment</button></form>{% endif %}
+{% if can_review and payment.status == "verified" %}<details><summary>Record a full refund</summary><form action="{% url 'payment-refund' payment.pk %}" method="post">{% csrf_token %}
+<p><label>Completed refund reference<input name="reference" maxlength="100" required></label></p>
+<p><label>Reason<textarea name="reason" maxlength="300" required></textarea></label></p><button class="action">Record refund of {{ payment.currency }} {{ payment.amount }}</button></form></details>{% endif %}
+{% if payment.refund %}<p>Refund {{ payment.refund.reference }} · {{ payment.currency }} {{ payment.refund.amount }}</p>{% endif %}</section>{% empty %}<p>No payment submitted.</p>{% endfor %}
+<h2 class="register">Subscription history</h2><ul>{% for event in invoice.subscription.history.all %}<li>{{ event.created_at|date:"j M Y H:i" }} · {{ event.new_status|capfirst }}</li>{% endfor %}</ul></div>{% endblock %}

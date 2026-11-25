@@ -1,0 +1,10 @@
+{% extends "search/base.html" %}{% block title %}{{ title }}{% endblock %}{% block content %}<div class="wrap content">
+<a class="back" href="{% url 'home' %}">← Directory home</a><h1>{{ title }}</h1>{% if description %}<p>{{ description }}</p>{% endif %}
+{% if facility %}<div class="panel"><p>{{ facility.hospital_type }} · {{ facility.district }}</p><p>{{ facility.address }}</p>
+{% if facility.phone %}<a href="tel:{{ facility.phone }}">{{ facility.phone }}</a>{% endif %} {% if facility.website %}<a href="{{ facility.website }}">Hospital website ↗</a>{% endif %}
+{% if facility.email %}<p><a href="mailto:{{ facility.email }}">{{ facility.email }}</a></p>{% endif %}</div>{% endif %}
+{% if division and not district %}<div class="chips">{% for d in division.district_set.all %}<a href="{% url 'public-district' division.slug d.slug %}">{{ d.name }}</a>{% endfor %}</div>{% endif %}
+{% if form %}<form method="get" class="filters">{{ form.non_field_errors }}{% for field in form %}<label>{{ field.label }}{{ field }}{{ field.errors }}</label>{% endfor %}<button class="primary">Search</button><a href="{% url 'public-doctors' %}">Clear filters</a></form>{% endif %}
+<p class="count">{{ page.paginator.count }} doctor{{ page.paginator.count|pluralize }}</p>
+<div class="cards">{% for doctor in page %}{% include "search/card.html" %}{% empty %}<div class="empty"><h2>No doctors found</h2><p>Try another name, specialty or location.</p><a href="{% url 'public-doctors' %}">Browse all doctors →</a></div>{% endfor %}</div>
+{% include "search/pager.html" %}</div>{% endblock %}

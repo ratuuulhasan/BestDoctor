@@ -1,0 +1,8 @@
+{% extends "frontend/base.html" %}{% block title %}Registration verification{% endblock %}
+{% block content %}<a href="{% url 'dashboard' %}">← Doctor dashboard</a><h1>Registration verification</h1>
+<p>BM&amp;DC registration {{ doctor.bmdc_number }}</p>
+{% if can_submit %}<section class="editor"><h2>Submit registration evidence</h2><form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.as_p }}<button class="action">Submit for review</button></form></section>{% else %}{{ form.non_field_errors }}{% endif %}
+{% if doctor.is_verified %}<section><h2>Public profile</h2><form method="post" action="{% url 'publication' %}">{% csrf_token %}
+{% if doctor.is_published %}<p><a href="{% url 'published-doctor' doctor.slug %}">View published profile</a></p><button name="action" value="withdraw" class="action">Withdraw profile</button>
+{% else %}<p>Your registration is approved. You can now make your profile public.</p><button name="action" value="publish" class="action">Publish profile</button>{% endif %}</form></section>{% endif %}
+<h2 class="register">Submissions</h2><ul>{% for item in attempts %}<li><a href="{% url 'verification-detail' item.pk %}">{{ item.submitted_at|date:"j M Y, H:i" }} · {{ item.get_status_display }}</a>{% if item.remarks %}<p>{{ item.remarks }}</p>{% endif %}</li>{% empty %}<li>No evidence submitted yet.</li>{% endfor %}</ul>{% endblock %}

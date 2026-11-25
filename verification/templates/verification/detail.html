@@ -1,0 +1,5 @@
+{% extends "frontend/base.html" %}{% block title %}Registration evidence{% endblock %}
+{% block content %}<article class="editor"><h1>{{ item.doctor.full_name }}</h1><p>BM&amp;DC {{ item.registration_number }} · {{ item.get_status_display }}</p>
+{% for doc in documents %}<p><a href="{% url 'verification-document' doc.pk %}">Download {{ doc.document_type }} (JPEG)</a></p>{% endfor %}
+{% if can_decide %}<h2>Review evidence</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button class="action">Record decision</button></form>{% else %}{{ form.non_field_errors }}{% endif %}
+<h2 class="register">History</h2><ol>{% for event in item.history.all %}<li>{{ event.created_at|date:"j M Y, H:i" }} · {{ event.new_status|capfirst }}{% if event.remarks %} — {{ event.remarks }}{% endif %}</li>{% endfor %}</ol></article>{% endblock %}

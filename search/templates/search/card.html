@@ -1,0 +1,4 @@
+<article class="panel"><div class="cardhead">{% if doctor.profile_image %}<img class="avatar" loading="lazy" src="{{ doctor.profile_image.url }}" alt="">{% else %}<span class="initial" aria-hidden="true">{{ doctor.full_name|slice:":1" }}</span>{% endif %}
+<div><h2><a href="{% url 'published-doctor' doctor.slug %}">{{ doctor.full_name }}</a></h2>{% if doctor.designation %}<p>{{ doctor.designation }}</p>{% endif %}</div></div>
+<div class="chips">{% for spec in doctor.listed_specialties %}<a href="{% url 'public-specialty' spec.slug %}">{{ spec.name }}</a>{% endfor %}</div>
+<a href="{% url 'published-doctor' doctor.slug %}">View profile and visiting hours →</a></article>

@@ -1,0 +1,27 @@
+:root {color-scheme:light;--ink:#133746;--teal:#00695f;--border:#d4e2e3}
+* {box-sizing:border-box}
+body {margin:0;background:#f4f8f9;color:var(--ink);font:1rem/1.55 "Segoe UI",sans-serif}
+.shell {width:min(1080px,92%);margin:auto}
+header {background:#fff;border-bottom:1px solid var(--border)}
+nav,.heading {display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+nav {min-height:68px}
+.brand {font-size:1.32rem;font-weight:750;text-decoration:none;color:var(--ink)}
+.brand b {border-radius:.45rem;background:var(--teal);color:white;padding:.12rem .4rem}
+main {padding:clamp(1.5rem,4vw,4rem) 0}
+h1,h2,h3 {line-height:1.2;color:var(--ink)}
+h1 {font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700}
+h2 {font-size:1.25rem;margin:0} h3 {font-size:1.05rem;margin-top:1.3rem}
+.eyebrow {font-size:.85rem;color:var(--teal);font-weight:700;margin:0 0 .4rem}
+.grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,295px),1fr));gap:1rem;margin-top:2rem}
+section,.editor {border:1px solid var(--border);border-radius:14px;background:white;padding:1.4rem}
+.editor {max-width:620px;margin:auto;padding:clamp(1.5rem,4vw,3rem)}
+.editor h1 {margin:1rem 0 1.5rem}
+ul {padding-left:1.2rem} section ul {list-style:none;padding:0;margin:1rem 0 0}
+section li {padding:.5rem 0;border-top:1px solid var(--border)}
+small,.helptext {display:block;color:#506970;font-size:.87rem}
+a,.link {color:var(--teal)} .link {border:0;background:none;text-decoration:underline}
+.action {display:inline-block;border:0;border-radius:.5rem;background:var(--teal);color:#fff;padding:.63rem 1.1rem;text-decoration:none;font-weight:600}
+.editor label {display:block;font-weight:600}
+input:not([type=checkbox]):not([type=hidden]),select,textarea {width:100%;padding:.55rem;border:1px solid #839ea3;border-radius:.4rem}
+.muted {color:#526c74} .errorlist {color:#a02a30} .notice {background:#d7f2e9;padding:.8rem;border-radius:.4rem}
+.register {margin:1.2rem 0 0} :focus-visible {outline:3px solid #176ca4;outline-offset:2px}

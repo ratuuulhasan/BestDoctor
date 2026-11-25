@@ -1,0 +1,7 @@
+{% extends "frontend/base.html" %}{% block title %}{{ title }}{% endblock %}
+{% block content %}<article class="editor"><a href="{% url back %}">← Back</a><h1>{{ title }}</h1>
+<form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.as_p }}
+<button class="action">{% if back == 'login' %}Create account{% else %}Save changes{% endif %}</button></form>
+{% if remove_section %}<details class="register"><summary>Remove record</summary>
+<form method="post" action="{% url 'record-remove' remove_section pk %}">{% csrf_token %}
+<p>Remove this record from your profile?</p><button class="link">Confirm removal</button></form></details>{% endif %}</article>{% endblock %}

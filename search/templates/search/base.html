@@ -1,0 +1,12 @@
+{% load static %}<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}Healthcare directory{% endblock %} | Best Doctor</title>
+<link rel="stylesheet" href="{% static 'frontend/vendor/bootstrap/bootstrap.min.css' %}" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH">
+<link rel="stylesheet" href="{% static 'frontend/vendor/icons/bootstrap-icons.min.css' %}">
+<link rel="stylesheet" href="{% static 'frontend/directory.css' %}"></head><body>
+<a class="skip" href="#main">Skip to content</a><header class="top"><nav class="wrap mainnav" aria-label="Main navigation">
+<a class="wordmark" href="{% url 'home' %}"><b aria-hidden="true">+</b> Best Doctor</a>
+<div class="navlinks"><a href="{% url 'public-doctors' %}">Doctors</a><a href="{% url 'public-specialties' %}">Specialties</a><a href="{% url 'public-hospitals' %}">Hospitals</a><a href="{% url 'public-locations' %}">Locations</a></div>
+{% if user.is_authenticated %}<a class="account" href="{% url 'portal' %}">My workspace</a>{% else %}<a class="account" href="{% url 'login' %}">Sign in <span aria-hidden="true">↗</span></a>{% endif %}</nav></header>
+<main id="main">{% block content %}{% endblock %}</main>
+<footer><div class="wrap foot"><a class="wordmark" href="{% url 'home' %}">Best Doctor</a><a href="{% url 'register' %}">Register as a doctor <span aria-hidden="true">↗</span></a></div></footer></body></html>
